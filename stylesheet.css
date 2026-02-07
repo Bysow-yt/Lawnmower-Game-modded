@@ -39,8 +39,3 @@
     gap: 10px;
     z-index: 9999;
 }
-#rightPanel > div {
-    background: rgba(0, 0, 0, 0.6);
-    padding: 8px;
-    border-radius: 6px;
-}
