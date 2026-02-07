@@ -430,7 +430,7 @@ function setMoney() {
 
     money = val
 
-    document.getElementById("mulch").textContent =
+    document.getElementById("money").textContent =
         `Money: ${money}`;
 
     updateMoney?.();
