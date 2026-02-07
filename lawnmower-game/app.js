@@ -396,8 +396,7 @@ function setMulch() {
     const val = Number(document.getElementById("mulchInput").value);
 
     if (isNaN(val) || val < 0) return;
-
-    mulch = val;
+ 
 
     document.getElementById("mulch").textContent =
         `Mulch: ${mulch}`;
