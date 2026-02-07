@@ -439,11 +439,12 @@ function setMoney() {
 }
 
 
-function toggleLeftPanel() {
-    const panel = document.getElementById("leftPanel");
+function togglePanels() {
+    const panels = document.getElementById("panels");
     const btn = document.getElementById("collapseBtn");
 
-    panel.classList.toggle("collapsed");
-    btn.textContent = panel.classList.contains("collapsed") ? "⟩" : "⟨";
+    panels.classList.toggle("collapsed");
+    btn.textContent = panels.classList.contains("collapsed") ? "▼" : "▲";
 }
+
 
