@@ -39,6 +39,22 @@ var mowerSizeMultiplier = 1.5;
 var tileSizeMultiplier = 3.5;
 var currentlyPrestiging = false;
 
+var maxitem = 999999999999999;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function Area(name, multiplierBuff, initialBuff, baseColor, grownColor, machineColor, unlockPrice, message, value, machineName, hmm){
     
     this.baseColor = baseColor;
@@ -46,11 +62,11 @@ function Area(name, multiplierBuff, initialBuff, baseColor, grownColor, machineC
     this.message = message;
     this.whyDoIDoThis = hmm;
     this.upgrades = [
-        new Upgrade("machineSpeed", speedBasePrice*initialBuff, mowerRateMultiplier+multiplierBuff, function(){activeField.machineSpeed++}, "%tpt% tiles/tick", "%name% Speed", function(){return activeField.machineSpeed<20;}),
+        new Upgrade("machineSpeed", speedBasePrice*initialBuff, mowerRateMultiplier+multiplierBuff, function(){activeField.machineSpeed++}, "%tpt% tiles/tick", "%name% Speed", function(){return activeField.machineSpeed<maxitem;}),
         new Upgrade("machineSize", sizeBasePrice*initialBuff, mowerSizeMultiplier+multiplierBuff, function(){if(activeField.machineWidth==activeField.machineHeight){activeField.machineWidth++}else{activeField.machineHeight++}activeField.machineX=0;activeField.machineY=0;}, "%w%x%h%", "%name% Size", function(){console.log(activeField.machineHeight + " " + tileSizes[activeField.tileSize]); return activeField.machineHeight < height/tileSizes[activeField.tileSize];}),
         new Upgrade("tileSize", tileBasePrice*initialBuff, tileSizeMultiplier+multiplierBuff, function(){activeField.tileSize=Math.min(activeField.tileSize+1,tileSizes.length-1);activeField.regenerate();}, "%sz%x%sz%", "Tile Size", function(){return activeField.tileSize < tileSizes.length - 1;}),
-        new Upgrade("growthRate", growthBasePrice*initialBuff, growthRateMultiplier+multiplierBuff, function(){activeField.growthAmount+=2;}, "%gr% growth/tick", "Growth Rate", function(){return activeField.growthAmount<60;}),
-        new Upgrade("tickRate", tickBasePrice*initialBuff, tickBaseMultiplier+multiplierBuff, function(){activeField.tickRate=Math.max(1,Math.floor(activeField.tickRate*0.9));}, "%ms% ms", "Tick Rate", function(){return activeField.tickRate > 4;})
+        new Upgrade("growthRate", growthBasePrice*initialBuff, growthRateMultiplier+multiplierBuff, function(){activeField.growthAmount+=2;}, "%gr% growth/tick", "Growth Rate", function(){return activeField.growthAmount<maxitem;}),
+        new Upgrade("tickRate", tickBasePrice*initialBuff, tickBaseMultiplier+multiplierBuff, function(){activeField.tickRate=Math.max(1,Math.floor(activeField.tickRate*0.9));}, "%ms% ms", "Tick Rate", function(){return activeField.tickRate > 1;})
     ];
     
     this.machineName = machineName;
