@@ -1,0 +1,81 @@
+#lawn {
+    border: solid;
+    border-width: 3px;
+    margin: auto;
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#desc {
+    position:fixed;
+    bottom:0;
+    right:10px;
+}
+
+#prestige {
+    position:fixed;
+    bottom: 0;
+}
+
+#superTicks {
+    position: fixed;
+    right:0;
+    top:0;
+}
+
+#panelWrapper {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+}
+
+/* collapse button */
+#collapseBtn {
+    width: 100%;
+    background: #333;
+    color: white;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* container for both panels */
+#panels {
+    display: flex;
+    gap: 10px;
+
+    overflow: hidden;
+    max-height: 500px; /* large enough for content */
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+/* collapsed state */
+#panels.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+/* panel styling */
+#leftPanel,
+#rightPanel {
+    background: rgba(0,0,0,0.7);
+    padding: 8px;
+    border-radius: 6px;
+    color: white;
+}
+
+#rightPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+
+

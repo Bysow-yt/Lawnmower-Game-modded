@@ -554,13 +554,22 @@ function setTileSize() {
     // Check if input is in "XxY" or "X x Y" format for custom grid size
     const gridMatch = input.match(/^(\d+)\s*x\s*(\d+)$/i);
     if (gridMatch) {
-        let cols = Math.max(1, Math.min(Math.floor(Number(gridMatch[1])), 10000)); // max 10000 cols
-        let rows = Math.max(1, Math.min(Math.floor(Number(gridMatch[2])), 10000)); // max 10000 rows
+        let cols = Math.max(1, Math.floor(Number(gridMatch[1])));
+        let rows = Math.max(1, Math.floor(Number(gridMatch[2])));
         
         // Calculate tile size for these dimensions
         let tileWidth = Math.floor(width / cols);
         let tileHeight = Math.floor(height / rows);
         let tileSize = Math.min(tileWidth, tileHeight);
+        
+        // If tile size is less than 1 pixel, clamp the grid size
+        if (tileSize < 1) {
+            cols = Math.min(cols, width);
+            rows = Math.min(rows, height);
+            tileWidth = Math.floor(width / cols);
+            tileHeight = Math.floor(height / rows);
+            tileSize = Math.min(tileWidth, tileHeight);
+        }
         
         // Store custom grid dimensions
         activeField.customCols = cols;
@@ -636,28 +645,3 @@ function togglePanels() {
 
 
 
-
-function setSize() {
-    const input = document.getElementById("sizeInput").value.trim();
-    
-    if (!activeField) return;
-    
-    // Check if input is in "XxY" or "X x Y" format
-    const gridMatch = input.match(/^(\d+)\s*x\s*(\d+)$/i);
-    if (gridMatch) {
-        let machineWidth = Math.max(1, Math.floor(Number(gridMatch[1])));
-        let machineHeight = Math.max(1, Math.floor(Number(gridMatch[2])));
-        
-        // Clamp to grid size so machine doesn't exceed the field dimensions
-        machineWidth = Math.min(machineWidth, activeField.getGridCols());
-        machineHeight = Math.min(machineHeight, activeField.getGridRows());
-        
-        activeField.machineWidth = machineWidth;
-        activeField.machineHeight = machineHeight;
-        activeField.machineX = 0;
-        activeField.machineY = 0;
-        
-        updateText();
-        return;
-    }
-}
