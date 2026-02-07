@@ -69,22 +69,33 @@
                         <input type="text" id="tileSizeInput" placeholder="10x10">
                         <button onclick="setTileSize()">Apply</button>
                     </div>
+
+                    <div id="SizeChanger" style="margin-bottom:8px;">
+                        <p style="margin:0 0 4px 0;">Size</p>
+                        <input type="text" id="sizeInput" placeholder="5x5">
+                        <button onclick="setSize()">Apply</button>
+                    </div>
               </div>
 
                <div id="rightPanel" style="flex:1;min-width:180px;">
-                  <div id="mulchSetter" style="margin-bottom:8px;">
+                  
+                <div id="mulchSetter" style="margin-bottom:8px;">
                      <p style="margin:0 0 4px 0;">Mulch</p>
                      <input type="number" id="mulchInput" placeholder="0">
                      <button onclick="setMulch()">Apply</button>
                   </div>
 
-                  <div id="moneySetter">
+                  <div id="moneySetter" style="margin-bottom:8px;">
                       <p style="margin:0 0 4px 0;">Money</p>
                       <input type="number" id="moneyInput" placeholder="67">
                       <button onclick="setMoney()">Apply</button>
                   </div>
+
+                  <div id="freeCostsSetter">
+                      <button onclick="setAllCostsFree()" style="width:100%;">Make All Costs Free</button>
+                  </div>
               </div>
-                 
+                
 
 
 

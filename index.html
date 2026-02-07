@@ -4,8 +4,38 @@
         <title>Lawnmower Game Modded 67676767</title>
         <script type="text/javascript" src="app.js"></script>
         <link rel="stylesheet" href="stylesheet.css" type="text/css" />
-        
-        
+        <style>
+            body.dark-mode {
+                background-color: #333;
+                color: #ddd;
+            }
+            
+            body.dark-mode canvas {
+                border: 2px solid #666;
+            }
+            
+            body.dark-mode button {
+                background-color: #555;
+                color: #ddd;
+                border: 1px solid #666;
+            }
+            
+            body.dark-mode button:hover {
+                background-color: #666;
+            }
+            
+            body.dark-mode input {
+                background-color: #555;
+                color: #ddd;
+                border: 1px solid #666;
+            }
+            
+            body.dark-mode div[id="area"],
+            body.dark-mode div[id="prestige"],
+            body.dark-mode div[id="panels"] {
+                background-color: #444;
+            }
+        </style>
         
     </head>
     
@@ -45,6 +75,8 @@
             <p id="growthBonus">Current Growth Bonus: 0</p>
         </div>
 
+
+        <button id="modeToggle" onclick="toggleDarkMode()" style="position: fixed; bottom: 20px; right: 40px; padding: 10px 15px; background-color: #333; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🌙 Dark Mode</button>
 
         <div id="panelWrapper">
          <button id="collapseBtn" onclick="togglePanels()">▲</button>

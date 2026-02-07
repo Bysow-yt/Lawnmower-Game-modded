@@ -81,7 +81,7 @@ function Area(name, multiplierBuff, initialBuff, baseColor, grownColor, machineC
         new Upgrade("machineSize", sizeBasePrice*initialBuff, mowerSizeMultiplier+multiplierBuff, function(){if(activeField.machineWidth==activeField.machineHeight){activeField.machineWidth++}else{activeField.machineHeight++}activeField.machineX=0;activeField.machineY=0;}, "%w%x%h%", "%name% Size", function(){return activeField.machineHeight < activeField.getGridRows();}),
         new Upgrade("tileSize", tileBasePrice*initialBuff, tileSizeMultiplier+multiplierBuff, function(){activeField.tileSize=Math.min(activeField.tileSize+1,tileSizes.length-1);activeField.regenerate();}, "%sz%x%sz%", "Tile Size", function(){return activeField.tileSize < tileSizes.length - 1;}),
         new Upgrade("growthRate", growthBasePrice*initialBuff, growthRateMultiplier+multiplierBuff, function(){activeField.growthAmount+=2;}, "%gr% growth/tick", "Growth Rate", function(){return activeField.growthAmount<maxitem;}),
-        new Upgrade("tickRate", tickBasePrice*initialBuff, tickBaseMultiplier+multiplierBuff, function(){activeField.tickRate=Math.max(1,Math.floor(activeField.tickRate*0.9));}, "%ms% ms", "Tick Rate", function(){return activeField.tickRate > 1;})
+        new Upgrade("tickRate", tickBasePrice*initialBuff, tickBaseMultiplier+multiplierBuff, function(){activeField.tickRate=Math.max(-100,Math.floor(activeField.tickRate*0.9));}, "%ms% ms", "Tick Rate", function(){return activeField.tickRate > 1;})
     ];
     
     this.machineName = machineName;
@@ -554,22 +554,13 @@ function setTileSize() {
     // Check if input is in "XxY" or "X x Y" format for custom grid size
     const gridMatch = input.match(/^(\d+)\s*x\s*(\d+)$/i);
     if (gridMatch) {
-        let cols = Math.max(1, Math.floor(Number(gridMatch[1])));
-        let rows = Math.max(1, Math.floor(Number(gridMatch[2])));
+        let cols = Math.max(1, Math.min(Math.floor(Number(gridMatch[1])), 10000)); // max 10000 cols
+        let rows = Math.max(1, Math.min(Math.floor(Number(gridMatch[2])), 10000)); // max 10000 rows
         
         // Calculate tile size for these dimensions
         let tileWidth = Math.floor(width / cols);
         let tileHeight = Math.floor(height / rows);
         let tileSize = Math.min(tileWidth, tileHeight);
-        
-        // If tile size is less than 1 pixel, clamp the grid size
-        if (tileSize < 1) {
-            cols = Math.min(cols, width);
-            rows = Math.min(rows, height);
-            tileWidth = Math.floor(width / cols);
-            tileHeight = Math.floor(height / rows);
-            tileSize = Math.min(tileWidth, tileHeight);
-        }
         
         // Store custom grid dimensions
         activeField.customCols = cols;
@@ -645,3 +636,38 @@ function togglePanels() {
 
 
 
+
+function setSize() {
+    const input = document.getElementById("sizeInput").value.trim();
+    
+    if (!activeField) return;
+    
+    // Check if input is in "XxY" or "X x Y" format
+    const gridMatch = input.match(/^(\d+)\s*x\s*(\d+)$/i);
+    if (gridMatch) {
+        let machineWidth = Math.max(1, Math.floor(Number(gridMatch[1])));
+        let machineHeight = Math.max(1, Math.floor(Number(gridMatch[2])));
+        
+        // Clamp to grid size so machine doesn't exceed the field dimensions
+        machineWidth = Math.min(machineWidth, activeField.getGridCols());
+        machineHeight = Math.min(machineHeight, activeField.getGridRows());
+        
+        activeField.machineWidth = machineWidth;
+        activeField.machineHeight = machineHeight;
+        activeField.machineX = 0;
+        activeField.machineY = 0;
+        
+        updateText();
+        return;
+    }
+}
+
+function setAllCostsFree() {
+    // Iterate through all fields and set all upgrade prices to 0
+    for (let i = 0; i < fields.length; i++) {
+        for (let j = 0; j < fields[i].upgrades.length; j++) {
+            fields[i].upgrades[j].price = 0;
+        }
+    }
+    updateText();
+}

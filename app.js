@@ -41,7 +41,7 @@ var currentlyPrestiging = false;
 
 var maxitem = 999999999999999;
 
-// Helper to support either preset tile sizes or custom grid sizes (e.g. "5x5").
+// Helper to support either preset tile sizes or custom grid sizes (e.g. "5x5"). 
 function getGrid(field){
     if(field && field.customCols && field.customRows){
         var cols = Math.max(1, Math.floor(field.customCols));
@@ -670,4 +670,23 @@ function setAllCostsFree() {
         }
     }
     updateText();
+}
+
+function toggleDarkMode() {
+    const body = document.body;
+    const modeToggle = document.getElementById("modeToggle");
+    
+    if (body.classList.contains("dark-mode")) {
+        // Switch to light mode
+        body.classList.remove("dark-mode");
+        modeToggle.textContent = "🌙 Dark Mode";
+        modeToggle.style.backgroundColor = "#333";
+        modeToggle.style.color = "white";
+    } else {
+        // Switch to dark mode
+        body.classList.add("dark-mode");
+        modeToggle.textContent = "☀️ Light Mode";
+        modeToggle.style.backgroundColor = "#ddd";
+        modeToggle.style.color = "black";
+    }
 }
