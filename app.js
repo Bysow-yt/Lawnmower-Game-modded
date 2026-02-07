@@ -41,6 +41,21 @@ var currentlyPrestiging = false;
 
 var maxitem = 999999999999999;
 
+// Helper to support either preset tile sizes or custom grid sizes (e.g. "5x5").
+function getGrid(field){
+    if(field && field.customCols && field.customRows){
+        var cols = Math.max(1, Math.floor(field.customCols));
+        var rows = Math.max(1, Math.floor(field.customRows));
+        // compute tile pixel size to fit the requested columns/rows into the canvas
+        var tile = Math.floor(Math.min(width/cols, height/rows));
+        return { cols: cols, rows: rows, tile: tile };
+    }else{
+        var tile = tileSizes[field.tileSize];
+        var cols = Math.floor(width / tile);
+        var rows = Math.floor(height / tile);
+        return { cols: cols, rows: rows, tile: tile };
+    }
+}
 
 
 
@@ -63,7 +78,7 @@ function Area(name, multiplierBuff, initialBuff, baseColor, grownColor, machineC
     this.whyDoIDoThis = hmm;
     this.upgrades = [
         new Upgrade("machineSpeed", speedBasePrice*initialBuff, mowerRateMultiplier+multiplierBuff, function(){activeField.machineSpeed++}, "%tpt% tiles/tick", "%name% Speed", function(){return activeField.machineSpeed<maxitem;}),
-        new Upgrade("machineSize", sizeBasePrice*initialBuff, mowerSizeMultiplier+multiplierBuff, function(){if(activeField.machineWidth==activeField.machineHeight){activeField.machineWidth++}else{activeField.machineHeight++}activeField.machineX=0;activeField.machineY=0;}, "%w%x%h%", "%name% Size", function(){console.log(activeField.machineHeight + " " + tileSizes[activeField.tileSize]); return activeField.machineHeight < height/tileSizes[activeField.tileSize];}),
+        new Upgrade("machineSize", sizeBasePrice*initialBuff, mowerSizeMultiplier+multiplierBuff, function(){if(activeField.machineWidth==activeField.machineHeight){activeField.machineWidth++}else{activeField.machineHeight++}activeField.machineX=0;activeField.machineY=0;}, "%w%x%h%", "%name% Size", function(){return activeField.machineHeight < activeField.getGridRows();}),
         new Upgrade("tileSize", tileBasePrice*initialBuff, tileSizeMultiplier+multiplierBuff, function(){activeField.tileSize=Math.min(activeField.tileSize+1,tileSizes.length-1);activeField.regenerate();}, "%sz%x%sz%", "Tile Size", function(){return activeField.tileSize < tileSizes.length - 1;}),
         new Upgrade("growthRate", growthBasePrice*initialBuff, growthRateMultiplier+multiplierBuff, function(){activeField.growthAmount+=2;}, "%gr% growth/tick", "Growth Rate", function(){return activeField.growthAmount<maxitem;}),
         new Upgrade("tickRate", tickBasePrice*initialBuff, tickBaseMultiplier+multiplierBuff, function(){activeField.tickRate=Math.max(1,Math.floor(activeField.tickRate*0.9));}, "%ms% ms", "Tick Rate", function(){return activeField.tickRate > 1;})
@@ -86,12 +101,27 @@ function Area(name, multiplierBuff, initialBuff, baseColor, grownColor, machineC
     this.totalMowed = 0;
     this.field = [];
     this.tileSize = 0;
+    this.customCols = null;
+    this.customRows = null;
+    this.customTileSize = null;
     this.tickRate = 1000;
     this.unlockPrice=unlockPrice;
     this.generateField = function(){
-        for(var i = 0; i < width/tileSizes[this.tileSize]; i++){
+        // Determine dimensions based on custom settings or preset tile size
+        let cols, rows, tileSize;
+        if (this.customCols && this.customRows && this.customTileSize) {
+            cols = this.customCols;
+            rows = this.customRows;
+            tileSize = this.customTileSize;
+        } else {
+            tileSize = tileSizes[this.tileSize];
+            cols = Math.floor(width / tileSize);
+            rows = Math.floor(height / tileSize);
+        }
+        
+        for(var i = 0; i < cols; i++){
             this.field.push(new Array());
-            for(var j = 0; j < height/tileSizes[this.tileSize]; j++){
+            for(var j = 0; j < rows; j++){
                 this.field[i].push(Math.floor(Math.random()*maxGrowth));
                 updateTile(this, i, j);
             }
@@ -110,12 +140,30 @@ function Area(name, multiplierBuff, initialBuff, baseColor, grownColor, machineC
     }
     
     this.getUpgradeText = function(upgrade){
-        return upgrade.displayText.replace("%tpt%", this.machineSpeed).replace("%w%", this.machineWidth).replace("%h%", this.machineHeight).replace(/%sz%/g, width/tileSizes[this.tileSize]).replace("%ms%", this.tickRate).replace("%gr%", this.growthAmount);
+        return upgrade.displayText.replace("%tpt%", this.machineSpeed).replace("%w%", this.machineWidth).replace("%h%", this.machineHeight).replace(/%sz%/g, this.getGridCols()).replace("%ms%", this.tickRate).replace("%gr%", this.growthAmount);
     }
     
     this.regenerate = function(){
         this.field = [];
         this.generateField();
+    }
+    
+    // Helper method to get the current tile size (respects custom dimensions)
+    this.getTileSize = function(){
+        if (this.customTileSize) return this.customTileSize;
+        return tileSizes[this.tileSize];
+    }
+    
+    // Helper method to get grid columns
+    this.getGridCols = function(){
+        if (this.customCols) return this.customCols;
+        return Math.floor(width / tileSizes[this.tileSize]);
+    }
+    
+    // Helper method to get grid rows
+    this.getGridRows = function(){
+        if (this.customRows) return this.customRows;
+        return Math.floor(height / tileSizes[this.tileSize]);
     }
     
     this.machineTick = function(){
@@ -150,36 +198,39 @@ function Area(name, multiplierBuff, initialBuff, baseColor, grownColor, machineC
             if(activeField == this)
                 document.getElementById("totalMowed").innerHTML = this.message + this.totalMowed;
             updateMoney();
+            var gridCols = this.getGridCols();
+            var gridRows = this.getGridRows();
             if(this.goingUp){
                 if(this.machineY > 0){
                     this.machineY--;
                 }else{
-                    if(this.machineX >= width / tileSizes[this.tileSize]-this.machineWidth){
+                    if(this.machineX >= gridCols-this.machineWidth){
                         this.goingUp=false;
                         this.machineX = 0;
                         this.machineY = 0;
                     }else{
-                        this.machineX=Math.min(this.machineX + this.machineWidth, width / tileSizes[this.tileSize]-this.machineWidth);
+                        this.machineX=Math.min(this.machineX + this.machineWidth, gridCols-this.machineWidth);
                         this.goingUp = false;
                     }
                 }
             }else{
-                if(this.machineY < height / tileSizes[this.tileSize]-this.machineHeight){
+                if(this.machineY < gridRows-this.machineHeight){
                     this.machineY++;
                 }else{
-                    if(this.machineX >= width / tileSizes[this.tileSize]-this.machineWidth){
+                    if(this.machineX >= gridCols-this.machineWidth){
                         this.goingUp=false;
                         this.machineX = 0;
                         this.machineY = 0;
                     }else{
-                        this.machineX=Math.min(this.machineX + this.machineWidth, width / tileSizes[this.tileSize]-this.machineWidth);
+                        this.machineX=Math.min(this.machineX + this.machineWidth, gridCols-this.machineWidth);
                         this.goingUp = true;
                     }
                 }
             }
             if(activeField==this){
+                var ts = this.getTileSize();
                 ctx.fillStyle = this.machineColor;
-                ctx.fillRect(this.machineX *tileSizes[this.tileSize],this.machineY*tileSizes[this.tileSize],tileSizes[this.tileSize]*this.machineWidth,tileSizes[this.tileSize]*this.machineHeight);
+                ctx.fillRect(this.machineX * ts, this.machineY * ts, ts * this.machineWidth, ts * this.machineHeight);
             }
             
         }
@@ -187,8 +238,8 @@ function Area(name, multiplierBuff, initialBuff, baseColor, grownColor, machineC
     
     this.growthTick = function(){
 
-        var x = Math.floor(Math.random()*width/tileSizes[this.tileSize]);
-        var y = Math.floor(Math.random()*height/tileSizes[this.tileSize]);
+        var x = Math.floor(Math.random()*this.getGridCols());
+        var y = Math.floor(Math.random()*this.getGridRows());
         if(this.field[x][y]<maxGrowth){
             
             this.field[x][y]=Math.min(maxGrowth, this.field[x][y]+1+growthBonus);
@@ -338,6 +389,8 @@ function addFields(){
     fields.push(new Area("Diamond", 0.85, 50000, [124, 124, 124], [124, 239, 228], "rgb(221, 206, 193)", 1000000000000, "Total Diamonds Mined: ", 2000, "Iron Pickaxe", "Ok - last one I swear."));
     fields.push(new Area("Gold", 0.95, 100000, [138, 202, 216], [211, 176, 0], "rgb(143, 158, 139)", 10000000000000, "Total Gold Panned: ", 5000, "Pan", "There's no rush ;)"));
     fields.push(new Area("People", 0.65, 5000, [255, 67, 50], [255, 211, 168], "rgb(100, 100, 100)", 100000000000000, "Total People Killed: ", 10000, "Terminator", "I'll be back"));
+    // Use a Number within JS safe integer range to avoid numeric precision/runtime issues
+    fields.push(new Area("Epstein", 1.15, 1000000, [0, 0, 0], [50, 50, 50], "rgb(191, 194, 50)", 67, "Total Kids Cracked: ", 50000, "Jeffery", "Where are the kids?"));
 }
 
 function setup(){
@@ -362,6 +415,19 @@ function updatePrestigeValues(){
     document.getElementById("valueBonus").innerHTML = "Current Value Bonus: " + mulch + "%";
     document.getElementById("growthBonus").innerHTML = "Current Growth Bonus: " + (growthBonus+1) + "x";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function calculateGrowthBonus(){
     growthBonus = Math.floor(Math.log(Math.max(1,mulch))/Math.log(15));
@@ -395,15 +461,24 @@ function reset(){
 }
 
 function updateTile(field, x, y){
-    
+
     var ratio = field.field[x][y]/maxGrowth;
-    
-    var r = field.baseColor[0]+Math.round(ratio*(field.grownColor[0]-field.baseColor[0]));
-    var g = field.baseColor[1]+Math.round(ratio*(field.grownColor[1]-field.baseColor[1]));
-    var b = field.baseColor[2]+Math.round(ratio*(field.grownColor[2]-field.baseColor[2]));
-    
+
+    // Special patterned grown colors for the "67" area: alternating rows
+    // even rows (top row is y=0) are white when fully grown, odd rows are blue.
+    var effectiveGrown = field.grownColor;
+    if(field && field.name === "Epstein"){
+        effectiveGrown = (y % 2 === 0) ? [255,255,255] : [0,0,255];
+    }
+
+    var r = field.baseColor[0] + Math.round(ratio*(effectiveGrown[0]-field.baseColor[0]));
+    var g = field.baseColor[1] + Math.round(ratio*(effectiveGrown[1]-field.baseColor[1]));
+    var b = field.baseColor[2] + Math.round(ratio*(effectiveGrown[2]-field.baseColor[2]));
+
+    var ts = field.getTileSize();
     ctx.fillStyle = "rgb("+r+","+g+","+b+")";
-    ctx.fillRect(x*tileSizes[field.tileSize], y*tileSizes[field.tileSize], tileSizes[field.tileSize], tileSizes[field.tileSize]);
+    ctx.fillRect(x * ts, y * ts, ts, ts);
+
     
 }
 //Modded section 
@@ -442,13 +517,14 @@ function setGrowth() {
     const val = Number(document.getElementById("growthInput").value);
 
     if (isNaN(val) || val <0) return;
-
-    growthRate = val
-
-    document.getElementById("growthRate").textContent =
-        `Growth Rate: ${growthRate}`;
-
-    updateGrowth?.();
+    // treat the input as a multiplier for the current growth amount
+    if (activeField) {
+        // ensure multiplier is positive; apply and keep at least 1 to avoid disabling growth
+        const newAmount = Math.max(1, Math.floor(activeField.growthAmount * val));
+        activeField.growthAmount = newAmount;
+        document.getElementById("growthRate").textContent = `Growth Rate: ${activeField.growthAmount}`;
+        updateText();
+    }
 
 
 }
@@ -457,19 +533,81 @@ function setSpeed() {
 
     if (isNaN(val) || val <0) return;
 
-    machineSpeed = val
+    if(!activeField) return;
 
-    document.getElementById("machineSpeed").textContent =
-        `Machine Speed: ${machineSpeed}`;
+    // apply the new machine speed to the currently active field
+    activeField.machineSpeed = Math.max(1, Math.floor(val));
 
-    updateMachineSpeed?.();
+    // refresh UI to reflect the change
+    updateText();
 
 
 }
 
 
+function setTileSize() {
 
+    const input = document.getElementById("tileSizeInput").value.trim();
 
+    if(!activeField) return;
+
+    // Check if input is in "XxY" or "X x Y" format for custom grid size
+    const gridMatch = input.match(/^(\d+)\s*x\s*(\d+)$/i);
+    if (gridMatch) {
+        const cols = Math.max(1, Math.min(Math.floor(Number(gridMatch[1])), 1000)); // cap at 50 cols
+        const rows = Math.max(1, Math.min(Math.floor(Number(gridMatch[2])), 1000)); // cap at 50 rows
+        
+        // Store custom grid dimensions
+        activeField.customCols = cols;
+        activeField.customRows = rows;
+        
+        // Calculate tile size to fit these dimensions
+        const tileWidth = Math.floor(width / cols);
+        const tileHeight = Math.floor(height / rows);
+        activeField.customTileSize = Math.min(tileWidth, tileHeight);
+        
+        activeField.regenerate();
+        updateText();
+        return;
+    }
+
+    // Otherwise, treat as preset tile size index or pixel size
+    const val = Number(input);
+
+    if (isNaN(val) || val < 0) return;
+
+    // Clear custom dimensions when using preset sizes
+    activeField.customCols = null;
+    activeField.customRows = null;
+    activeField.customTileSize = null;
+
+    // The textbox may contain either an index (0..n-1) or an actual tile pixel size (e.g. 50,25,10).
+    // First try to find an exact match in the tileSizes array. If none, treat small integers as indices,
+    // otherwise pick the nearest available tile size.
+    let newIndex = tileSizes.indexOf(val);
+    if (newIndex === -1) {
+        if (Number.isInteger(val) && val >= 0 && val < tileSizes.length) {
+            newIndex = val; // user provided an index
+        } else {
+            // find nearest tile size by absolute difference
+            let minDiff = Infinity;
+            for (let i = 0; i < tileSizes.length; i++) {
+                const d = Math.abs(tileSizes[i] - val);
+                if (d < minDiff) {
+                    minDiff = d;
+                    newIndex = i;
+                }
+            }
+        }
+    }
+
+    // clamp and apply
+    newIndex = Math.min(Math.max(0, newIndex), tileSizes.length - 1);
+    activeField.tileSize = newIndex;
+    activeField.regenerate(); // regenerate the field to apply the new tile size
+    // refresh UI to reflect the change
+    updateText();
+}
 
 
 
@@ -483,5 +621,17 @@ function togglePanels() {
     panels.classList.toggle("collapsed");
     btn.textContent = panels.classList.contains("collapsed") ? "▼" : "▲";
 }
+
+
+//Growth Value and Speed Value Updaters
+
+
+
+
+
+
+
+
+
 
 
