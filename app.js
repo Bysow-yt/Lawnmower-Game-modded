@@ -661,3 +661,13 @@ function setSize() {
         return;
     }
 }
+
+function setAllCostsFree() {
+    // Iterate through all fields and set all upgrade prices to 0
+    for (let i = 0; i < fields.length; i++) {
+        for (let j = 0; j < fields[i].upgrades.length; j++) {
+            fields[i].upgrades[j].price = 0;
+        }
+    }
+    updateText();
+}

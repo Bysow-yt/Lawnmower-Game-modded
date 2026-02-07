@@ -78,19 +78,24 @@
               </div>
 
                <div id="rightPanel" style="flex:1;min-width:180px;">
-                  <div id="mulchSetter" style="margin-bottom:8px;">
+                  
+                <div id="mulchSetter" style="margin-bottom:8px;">
                      <p style="margin:0 0 4px 0;">Mulch</p>
                      <input type="number" id="mulchInput" placeholder="0">
                      <button onclick="setMulch()">Apply</button>
                   </div>
 
-                  <div id="moneySetter">
+                  <div id="moneySetter" style="margin-bottom:8px;">
                       <p style="margin:0 0 4px 0;">Money</p>
                       <input type="number" id="moneyInput" placeholder="67">
                       <button onclick="setMoney()">Apply</button>
                   </div>
+
+                  <div id="freeCostsSetter">
+                      <button onclick="setAllCostsFree()" style="width:100%;">Make All Costs Free</button>
+                  </div>
               </div>
-                 
+                
 
 
 
