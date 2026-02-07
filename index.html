@@ -35,7 +35,7 @@
             <span id="texttileSize">Current: 20x20</span>
         </div>
         <p></p>
-        <button onclick="previous()"><</button>
+        <button onclick="previous()"></button>
         <button id="unlock" onclick="unlockNext()">Unlock Dust Field for $1000000</button>
         <button onclick="next()">></button>
         <div id="prestige">
@@ -47,28 +47,31 @@
 
         ;*
         <div id="panelWrapper">
-            <button id="collapseBtn" onclick="toggleLeftPanel()">⟨</button>
+         <button id="collapseBtn" onclick="togglePanels()">▲</button>
 
-           <div id="leftPanel">
-               <p>Something Else</p>
-              <input type="text" placeholder="Type here">
-            </div>
+          <div id="panels">
+              <div id="leftPanel">
+                 <p>Something Else</p>
+                 <input type="text" placeholder="Type here">
+              </div>
 
-           <div id="rightPanel">
-               <div id="mulchSetter">
-                    <p>Mulch</p>
-                 <input type="number" id="mulchInput" placeholder="0">
-                    <button onclick="setMulch()">Apply</button>
-                </div>
+               <div id="rightPanel">
+                  <div id="mulchSetter">
+                     <p>Mulch</p>
+                     <input type="number" id="mulchInput" placeholder="0">
+                        <button onclick="setMulch()">Apply</button>
+                  </div>
 
-              <div id="moneySetter">
-                  <p>Money</p>
-                   <input type="number" id="moneyInput" placeholder="67">
-                  <button onclick="setMoney()">Apply</button>
-             </div>
-         
+                  <div id="moneySetter">
+                      <p>Money</p>
+                      <input type="number" id="moneyInput" placeholder="67">
+                      <button onclick="setMoney()">Apply</button>
+                 </div>
             </div>
         </div>
+    </div>
+</div>
+
         
 
 
