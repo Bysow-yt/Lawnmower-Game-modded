@@ -438,7 +438,44 @@ function setMoney() {
 
 }
 
+function setGrowth() {
+    const val = Number(document.getElementById("growthInput").value);
 
+    if (isNaN(val) || val <0) return;
+
+    growthRate = val
+
+    document.getElementById("growthRate").textContent =
+        `Growth Rate: ${growthRate}`;
+
+    updateGrowth?.();
+
+
+}
+function setSpeed() {
+    const val = Number(document.getElementById("speedInput").value);
+
+    if (isNaN(val) || val <0) return;
+
+    machineSpeed = val
+
+    document.getElementById("machineSpeed").textContent =
+        `Machine Speed: ${machineSpeed}`;
+
+    updateMachineSpeed?.();
+
+
+}
+
+
+
+
+
+
+
+
+
+//Panels
 function togglePanels() {
     const panels = document.getElementById("panels");
     const btn = document.getElementById("collapseBtn");
