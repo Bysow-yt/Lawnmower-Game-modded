@@ -45,20 +45,32 @@
             <p id="growthBonus">Current Growth Bonus: 0</p>
         </div>
 
+        ;*
+        <div id="panelWrapper">
+            <button id="collapseBtn" onclick="toggleLeftPanel()">⟨</button>
 
-
-        <div id="rightPanel">
-            <div id="mulchSetter">
-                <p>Mulch</p>
-                <input type="number" id="mulchInput" placeholder="0">
-                <button onclick="setMulch()">Apply</button>
+           <div id="leftPanel">
+               <p>Something Else</p>
+              <input type="text" placeholder="Type here">
             </div>
-            <div id="moneySetter">
-                <p>Money</p>
-                <input type="number" id="moneyInput" placeholder="67">
-                <button onclick="setMoney()">Apply</button>
+
+           <div id="rightPanel">
+               <div id="mulchSetter">
+                    <p>Mulch</p>
+                 <input type="number" id="mulchInput" placeholder="0">
+                    <button onclick="setMulch()">Apply</button>
+                </div>
+
+              <div id="moneySetter">
+                  <p>Money</p>
+                   <input type="number" id="moneyInput" placeholder="67">
+                  <button onclick="setMoney()">Apply</button>
+             </div>
+         
             </div>
         </div>
+        
+
 
     </div>
 

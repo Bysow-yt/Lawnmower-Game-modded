@@ -437,3 +437,13 @@ function setMoney() {
 
 
 }
+
+
+function toggleLeftPanel() {
+    const panel = document.getElementById("leftPanel");
+    const btn = document.getElementById("collapseBtn");
+
+    panel.classList.toggle("collapsed");
+    btn.textContent = panel.classList.contains("collapsed") ? "⟩" : "⟨";
+}
+

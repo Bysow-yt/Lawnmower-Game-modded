@@ -27,15 +27,42 @@
     top:0;
 }
 
-#rightPanel {
+#panelWrapper {
     position: fixed;
     top: 10px;
     right: 10px;
-
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-
-    gap: 10px;
+    gap: 8px;
     z-index: 9999;
 }
+
+#leftPanel {
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,0.7);
+    padding: 8px;
+    border-radius: 6px;
+}
+
+#rightPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* collapsed state */
+#leftPanel.collapsed {
+    display: none;
+}
+
+#collapseBtn {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+
+
