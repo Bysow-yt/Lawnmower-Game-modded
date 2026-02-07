@@ -390,3 +390,17 @@ function updateTile(field, x, y){
     ctx.fillRect(x*tileSizes[field.tileSize], y*tileSizes[field.tileSize], tileSizes[field.tileSize], tileSizes[field.tileSize]);
     
 }
+//Modded section 
+//Textbox for mulch
+function setMulch() {
+    const val = Number(document.getElementById("mulchInput").value);
+
+    if (isNaN(val) || val < 0) return;
+
+    mulch = val;
+
+    document.getElementById("mulch").textContent =
+        `Mulch: ${mulch}`;
+
+    updatePrestigeUI?.();
+}
