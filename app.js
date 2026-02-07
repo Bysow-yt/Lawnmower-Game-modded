@@ -417,9 +417,23 @@ function setMulch() {
     if (isNaN(val) || val < 0) return;
  
     mulch = val
-    
+
     document.getElementById("mulch").textContent =
         `Mulch: ${mulch}`;
 
     updatePrestigeUI?.();
+}
+function setMoney() {
+    const val = Number(document.getElementById("moneyInput").value);
+
+    if (isNaN(val) || val <0) return;
+
+    money = val
+
+    document.getElementById("mulch").textContent =
+        `Money: ${money}`;
+
+    updateMoney?.();
+
+
 }
