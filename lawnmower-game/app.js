@@ -391,6 +391,28 @@ function updateTile(field, x, y){
     
 }
 //Modded section 
+//Mosue Movement
+
+document.addEventListener("mousemove", (e) => {
+    document.getElementById("cursorPos").textContent =
+        `x: ${e.clientX}, y: ${e.clientY}`;
+});
+
+document.addEventListener("click", (e) => {
+    console.log(`Clicked at x:${e.clientX}, y:${e.clientY}`);
+});
+
+let showCoords = true;
+
+document.addEventListener("keydown", e => {
+    if (e.key === "p") {
+        showCoords = !showCoords;
+        document.getElementById("cursorPos").style.display =
+            showCoords ? "block" : "none";
+    }
+});
+
+
 //Textbox for mulch
 function setMulch() {
     const val = Number(document.getElementById("mulchInput").value);
