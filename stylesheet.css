@@ -26,18 +26,7 @@
     right:0;
     top:0;
 }
-#cursorPos {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background: rgba(0,0,0,0.7);
-    color: lime;
-    font-family: monospace;
-    padding: 6px 10px;
-    border-radius: 6px;
-    z-index: 9999;
-    pointer-events: none;
-}
+
 #rightPanel {
     position: fixed;
     top: 10px;
